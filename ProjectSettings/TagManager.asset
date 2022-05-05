@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - LeftUp
+  - LeftDown
+  - RightDown
+  - RightUp
+  - Barrier
+  - Crossing
   layers:
   - Default
   - TransparentFX
