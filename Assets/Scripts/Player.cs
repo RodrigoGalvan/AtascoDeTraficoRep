@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [Range(1f, 10f)] public int moveSpeed; //Speed para mover el carro
+    [Range(0.5f, 10f)] public float moveSpeed; //Speed para mover el carro
     public Rigidbody2D rig; //RigidBody del carro
     public Transform movepoint; //Mover el carro hacia un punto en frente de el para tener un movimiento conforme al grid
     private bool left; //Vuelta a la izquierda
@@ -67,9 +67,7 @@ public class Player : MonoBehaviour
             up = false;
         }
         
-        //Si no ha dado la vuelta
-
-        //Si esta en el tile correcto y si no hay un collider arriba de el
+        //Si el siguiente tile al que va el jugador es verdadero entonces tiene esas opciones para moverse
         if (movePoint.GetComponent<PointMoved>().canTurnLeftUp == true )
         {
             //Si es derecha o arriba
@@ -142,13 +140,14 @@ public class Player : MonoBehaviour
             turnUp();
         }
 
-        //Mueve un espacio y cuando llega al siguiente espacio programa para ir al siguiente
+        //Mueve un espacio y cuando la distancia al punto donde tiene programado
+        //llegar entonces se programa para ir al siguiente espacio
         if (Vector3.Distance(transform.position, movepoint.position) == 0f)
         {
             movepoint.position += new Vector3(xDir, yDir, 0f);
         }
 
-        //Mover hacia el siguiente espacio
+        //Mover hacia el espacio definido en cualquier momento a cierta velocidad
         transform.position = Vector3.MoveTowards(transform.position, movepoint.position, moveSpeed * Time.deltaTime);
 
     }
