@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+
     [Range(0.5f, 10f)] public float moveSpeed; //Speed para mover el carro
     public Rigidbody2D rig; //RigidBody del carro
     public Transform movepoint; //Mover el carro hacia un punto en frente de el para tener un movimiento conforme al grid
