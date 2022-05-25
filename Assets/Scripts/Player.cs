@@ -5,15 +5,17 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [Range(1f, 10f)] public int moveSpeed; //Speed para mover el carro
+    [Range(0.5f, 10f)] public float moveSpeed; //Speed para mover el carro
     public Rigidbody2D rig; //RigidBody del carro
     public Transform movepoint; //Mover el carro hacia un punto en frente de el para tener un movimiento conforme al grid
     private bool left; //Vuelta a la izquierda
     private bool right; //Vuelta a la derecha
     private bool down; //Vuelta a hacia abajo
     private bool up; //Vuelta a hacia arriba
+
     private bool turning;
     private Quaternion currentAngle;
+
     private int xDir; //Dirrecion de movimiento en x
     private int yDir; //Dirrecion de movimiento en y
     public TextMeshProUGUI textOnDisplay;
@@ -73,6 +75,7 @@ public class Player : MonoBehaviour
         //Si no ha dado la vuelta
 
         //Si esta en el tile correcto y si no hay un collider arriba de el
+        //Si el siguiente tile al que va el jugador es verdadero entonces tiene esas opciones para moverse
         if (movePoint.GetComponent<PointMoved>().canTurnLeftUp == true )
         {
             //Si es derecha o arriba
@@ -146,6 +149,8 @@ public class Player : MonoBehaviour
         }
 
         //Mueve un espacio y cuando llega al siguiente espacio programa para ir al siguiente
+        //Mueve un espacio y cuando la distancia al punto donde tiene programado
+        //llegar entonces se programa para ir al siguiente espacio
         if (Vector3.Distance(transform.position, movepoint.position) == 0f)
         {
             movepoint.position += new Vector3(xDir, yDir, 0f);
