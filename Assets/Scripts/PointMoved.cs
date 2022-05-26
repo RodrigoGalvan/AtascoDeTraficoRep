@@ -14,6 +14,7 @@ public class PointMoved : MonoBehaviour
     public bool canTurnDown;
     public bool canTurnLeft;
     public bool canTurnUp;
+    public bool turning;
     // Start is called before the first frame update
     void Start()
     {
@@ -57,6 +58,9 @@ public class PointMoved : MonoBehaviour
 
             case "StraightUp":
                 canTurnUp = true;
+                break;
+            case "Crossing":
+                turning = false;
                 break;
         };
     }

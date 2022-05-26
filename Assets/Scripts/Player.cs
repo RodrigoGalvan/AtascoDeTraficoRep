@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -76,7 +77,7 @@ public class Player : MonoBehaviour
 
         //Si esta en el tile correcto y si no hay un collider arriba de el
         //Si el siguiente tile al que va el jugador es verdadero entonces tiene esas opciones para moverse
-        if (movePoint.GetComponent<PointMoved>().canTurnLeftUp == true )
+        if (movePoint.GetComponent<PointMoved>().canTurnLeftUp == true && movePoint.GetComponent<PointMoved>().turning == false)
         {
             //Si es derecha o arriba
             if (left)
@@ -89,7 +90,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (movePoint.GetComponent<PointMoved>().canTurnLeftDown == true )
+        if (movePoint.GetComponent<PointMoved>().canTurnLeftDown == true && movePoint.GetComponent<PointMoved>().turning == false)
         {
             if (left)
             {
@@ -99,9 +100,10 @@ public class Player : MonoBehaviour
             {
                 turnDown();
             }
+
         }
 
-        if (movePoint.GetComponent<PointMoved>().canTurnRightUp == true )
+        if (movePoint.GetComponent<PointMoved>().canTurnRightUp == true && movePoint.GetComponent<PointMoved>().turning == false)
         {
             if (right)
             {
@@ -113,7 +115,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (movePoint.GetComponent<PointMoved>().canTurnRightDown == true )
+        if (movePoint.GetComponent<PointMoved>().canTurnRightDown == true && movePoint.GetComponent<PointMoved>().turning == false)
         {
             if (right)
             {
@@ -124,28 +126,28 @@ public class Player : MonoBehaviour
                 turnDown();
             }
         }
-        
+
 
         if (movePoint.GetComponent<PointMoved>().canTurnDown == true)
         {
-            turnDown();
+            turnStraightDown();
         }
 
         if (movePoint.GetComponent<PointMoved>().canTurnRight == true)
         {
-            turnRight();
+            turnStraightRight();
 
         }
 
         if (movePoint.GetComponent<PointMoved>().canTurnLeft == true)
         {
-            turnLeft();
+            turnStraightLeft();
 
         }
 
         if (movePoint.GetComponent<PointMoved>().canTurnUp == true)
         {
-            turnUp();
+            turnStraightUp();
         }
 
         //Mueve un espacio y cuando llega al siguiente espacio programa para ir al siguiente
@@ -169,12 +171,20 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void chageText(string text)
+    private void turnStraightUp()
     {
-        textOnDisplay.text = text;
+        if (Vector3.Distance(transform.position, movepoint.position) == 0f)
+        {
+            turning = true;
+            currentAngle = Quaternion.Euler(0, 0, 270);
+            xDir = 0;
+            yDir = 1;
+            up = false;
+        }
     }
 
-    private void turnLeft() {
+    private void turnStraightLeft()
+    {
         if (Vector3.Distance(transform.position, movepoint.position) == 0f)
         {
             turning = true;
@@ -185,7 +195,8 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void turnRight() {
+    private void turnStraightRight()
+    {
         if (Vector3.Distance(transform.position, movepoint.position) == 0f)
         {
             turning = true;
@@ -196,7 +207,8 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void turnDown() {
+    private void turnStraightDown()
+    {
         if (Vector3.Distance(transform.position, movepoint.position) == 0f)
         {
             turning = true;
@@ -207,9 +219,51 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void turnUp() {
-        if (Vector3.Distance(transform.position, movepoint.position) == 0f)
+    private void chageText(string text)
+    {
+        textOnDisplay.text = text;
+    }
+
+    private void turnLeft() {
+        if (Vector3.Distance(transform.position, movepoint.position) == 0f )
         {
+            movePoint.GetComponent<PointMoved>().turning = true;
+            turning = true;
+            currentAngle = Quaternion.Euler(0, 0, 0);
+            xDir = -1;
+            yDir = 0;
+            left = false;
+        }
+    }
+
+    private void turnRight() {
+        if (Vector3.Distance(transform.position, movepoint.position) == 0f )
+        {
+            movePoint.GetComponent<PointMoved>().turning = true;
+            turning = true;
+            currentAngle = Quaternion.Euler(0, 0, 180);
+            xDir = 1;
+            yDir = 0;
+            right = false;
+        }
+    }
+
+    private void turnDown() {
+        if (Vector3.Distance(transform.position, movepoint.position) == 0f )
+        {
+            movePoint.GetComponent<PointMoved>().turning = true;
+            turning = true;
+            currentAngle = Quaternion.Euler(0, 0, 90);
+            xDir = 0;
+            yDir = -1;
+            down = false;
+        }
+    }
+
+    private void turnUp() {
+        if (Vector3.Distance(transform.position, movepoint.position) == 0f )
+        {
+            movePoint.GetComponent<PointMoved>().turning = true;
             turning = true;
             currentAngle = Quaternion.Euler(0, 0, 270);
             xDir = 0;

@@ -4,37 +4,273 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    private Vector3 startPosition;
-    public Vector3 targetPosition;
-
-    public float moveSpeed;
-    private bool movingToTarget;
-
+    [Range(1f, 10f)] public int moveSpeed; //Speed para mover el carro
+    public Rigidbody2D rig; //RigidBody del carro
+    public Transform movepoint; //Mover el carro hacia un punto en frente de el para tener un movimiento conforme al grid
+    private bool left; //Vuelta a la izquierda
+    private bool right; //Vuelta a la derecha
+    private bool down; //Vuelta a hacia abajo
+    private bool up; //Vuelta a hacia arriba
+    private bool turning;
+    private Quaternion currentAngle;
+    public bool startMovingLeftOrRight;
+    private int xDir; //Dirrecion de movimiento en x
+    private int yDir; //Dirrecion de movimiento en y
+    public GameObject movePoint;
+    public int num;
     // Start is called before the first frame update
     void Start()
     {
-        startPosition = transform.position;
-        movingToTarget = true;
+        //Variables iniciales
+        movepoint.parent = null;
+        if (startMovingLeftOrRight == true)
+        {
+            xDir = 1;
+            gameObject.GetComponentInChildren<SpriteRenderer>().flipY = true;
+        }
+        else {
+            xDir = -1;
+        }
+        yDir = 0;
+        left = false;
+        right = false;
+        up = false;
+        down = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (movingToTarget == true)
+        num = Random.Range(1, 4);
+        //De acuerdo al input a que dirrecion va
+        if (num == 1)
         {
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+            left = true;
+            right = false;
+            up = false;
+            down = false;
+        }
+        if (num == 2)
+        {
+            right = true;
+            up = false;
+            down = false;
+            left = false;
+        }
+        if (num == 3)
+        {
+            up = true;
+            left = false;
+            down = false;
+            right = false;
+        }
+        if (num == 4)
+        {
+            down = true;
+            left = false;
+            right = false;
+            up = false;
+        }
 
-            if (transform.position == targetPosition)
+        //Si no ha dado la vuelta
+
+        //Si esta en el tile correcto y si no hay un collider arriba de el
+        //Si el siguiente tile al que va el jugador es verdadero entonces tiene esas opciones para moverse
+        if (movePoint.GetComponent<PointMoved>().canTurnLeftUp == true && movePoint.GetComponent<PointMoved>().turning == false)
+        {
+            //Si es derecha o arriba
+            if (left)
             {
-                movingToTarget = false;
+                turnLeft();
+            }
+            if (up)
+            {
+                turnUp();
             }
         }
-        else
-        {
-            Destroy(gameObject);
 
+        if (movePoint.GetComponent<PointMoved>().canTurnLeftDown == true && movePoint.GetComponent<PointMoved>().turning == false)
+        {
+            if (left)
+            {
+                turnLeft();
+            }
+            if (down)
+            {
+                turnDown();
+            }
+
+        }
+
+        if (movePoint.GetComponent<PointMoved>().canTurnRightUp == true && movePoint.GetComponent<PointMoved>().turning == false)
+        {
+            if (right)
+            {
+                turnRight();
+            }
+            if (up)
+            {
+                turnUp();
+            }
+        }
+
+        if (movePoint.GetComponent<PointMoved>().canTurnRightDown == true && movePoint.GetComponent<PointMoved>().turning == false)
+        {
+            if (right)
+            {
+                turnRight();
+            }
+            if (down)
+            {
+                turnDown();
+            }
+        }
+
+
+        if (movePoint.GetComponent<PointMoved>().canTurnDown == true)
+        {
+            turnStraightDown();
+        }
+
+        if (movePoint.GetComponent<PointMoved>().canTurnRight == true)
+        {
+            turnStraightRight();
+
+        }
+
+        if (movePoint.GetComponent<PointMoved>().canTurnLeft == true)
+        {
+            turnStraightLeft();
+
+        }
+
+        if (movePoint.GetComponent<PointMoved>().canTurnUp == true)
+        {
+            turnStraightUp();
+        }
+
+        //Mueve un espacio y cuando llega al siguiente espacio programa para ir al siguiente
+        //Mueve un espacio y cuando la distancia al punto donde tiene programado
+        //llegar entonces se programa para ir al siguiente espacio
+        if (Vector3.Distance(transform.position, movepoint.position) == 0f)
+        {
+            movepoint.position += new Vector3(xDir, yDir, 0f);
+        }
+
+        //Mover hacia el siguiente espacio
+        transform.position = Vector3.MoveTowards(transform.position, movepoint.position, moveSpeed * Time.deltaTime);
+
+        if (turning)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, currentAngle, 0.2f);
+            if (transform.rotation == currentAngle)
+            {
+                turning = false;
+            }
         }
     }
 
-  
+    private void turnStraightUp()
+    {
+        if (Vector3.Distance(transform.position, movepoint.position) == 0f)
+        {
+            turning = true;
+            currentAngle = Quaternion.Euler(0, 0, 270);
+            xDir = 0;
+            yDir = 1;
+            up = false;
+        }
+    }
+
+    private void turnStraightLeft()
+    {
+        if (Vector3.Distance(transform.position, movepoint.position) == 0f)
+        {
+            turning = true;
+            currentAngle = Quaternion.Euler(0, 0, 0);
+            xDir = -1;
+            yDir = 0;
+            left = false;
+        }
+    }
+
+    private void turnStraightRight()
+    {
+        if (Vector3.Distance(transform.position, movepoint.position) == 0f)
+        {
+            turning = true;
+            currentAngle = Quaternion.Euler(0, 0, 180);
+            xDir = 1;
+            yDir = 0;
+            right = false;
+        }
+    }
+
+    private void turnStraightDown()
+    {
+        if (Vector3.Distance(transform.position, movepoint.position) == 0f)
+        {
+            if (startMovingLeftOrRight == true)
+            {
+                gameObject.GetComponentInChildren<SpriteRenderer>().flipY = false;
+            }
+            turning = true;
+            currentAngle = Quaternion.Euler(0, 0, 90);
+            xDir = 0;
+            yDir = -1;
+            down = false;
+        }
+    }
+
+    private void turnLeft()
+    {
+        if (Vector3.Distance(transform.position, movepoint.position) == 0f)
+        {
+            movePoint.GetComponent<PointMoved>().turning = true;
+            turning = true;
+            currentAngle = Quaternion.Euler(0, 0, 0);
+            xDir = -1;
+            yDir = 0;
+            left = false;
+        }
+    }
+
+    private void turnRight()
+    {
+        if (Vector3.Distance(transform.position, movepoint.position) == 0f)
+        {
+            movePoint.GetComponent<PointMoved>().turning = true;
+            turning = true;
+            currentAngle = Quaternion.Euler(0, 0, 180);
+            xDir = 1;
+            yDir = 0;
+            right = false;
+        }
+    }
+
+    private void turnDown()
+    {
+        if (Vector3.Distance(transform.position, movepoint.position) == 0f)
+        {
+            movePoint.GetComponent<PointMoved>().turning = true;
+            turning = true;
+            currentAngle = Quaternion.Euler(0, 0, 90);
+            xDir = 0;
+            yDir = -1;
+            down = false;
+        }
+    }
+
+    private void turnUp()
+    {
+        if (Vector3.Distance(transform.position, movepoint.position) == 0f)
+        {
+            movePoint.GetComponent<PointMoved>().turning = true;
+            turning = true;
+            currentAngle = Quaternion.Euler(0, 0, 270);
+            xDir = 0;
+            yDir = 1;
+            up = false;
+        }
+    }
 }
