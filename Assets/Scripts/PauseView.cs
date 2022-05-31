@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class PauseView : MonoBehaviour
 {
     [SerializeField]
@@ -25,13 +25,20 @@ public class PauseView : MonoBehaviour
         Time.timeScale = 1;
     }
 
+    public void Restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        Time.timeScale = 1;
+    }
+
+
     public void Exit()
     {
         if (!isLoading)
         {
             isLoading = true;
             Time.timeScale = 1;
-            AsyncOperation op = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Menu");
+            AsyncOperation op = SceneManager.LoadSceneAsync("Menu");
             op.allowSceneActivation = true;
         }
     }

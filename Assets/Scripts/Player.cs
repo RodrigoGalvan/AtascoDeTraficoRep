@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     private bool right; //Vuelta a la derecha
     private bool down; //Vuelta a hacia abajo
     private bool up; //Vuelta a hacia arriba
+    public GameObject GameOverMenu;
 
     private bool turning;
     private Quaternion currentAngle;
@@ -35,6 +36,8 @@ public class Player : MonoBehaviour
         turning = false;
 
     }
+
+    
 
     // Update is called once per frame
     void Update()
@@ -271,4 +274,13 @@ public class Player : MonoBehaviour
             up = false;
         }
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Enemy")) {
+            Time.timeScale = 0;
+            GameOverMenu.SetActive(true);
+        }
+    }
+
 }
