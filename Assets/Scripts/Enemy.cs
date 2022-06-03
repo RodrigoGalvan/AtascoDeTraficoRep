@@ -1,34 +1,39 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [Range(1f, 10f)] public int moveSpeed; //Speed para mover el carro
+    [Range(1f, 10f)] public float moveSpeed; //Speed para mover el carro
     public Rigidbody2D rig; //RigidBody del carro
     public Transform movepoint; //Mover el carro hacia un punto en frente de el para tener un movimiento conforme al grid
     private bool left; //Vuelta a la izquierda
     private bool right; //Vuelta a la derecha
     private bool down; //Vuelta a hacia abajo
     private bool up; //Vuelta a hacia arriba
-    private bool turning;
-    private Quaternion currentAngle;
-    public bool startMovingLeftOrRight;
+    private bool turning; //Si el carro esta volteando
+    private Quaternion currentAngle; //Cuanto tiene que voltear el carro
+    public bool startMovingLeftOrRight; //Si el carro spawnea de la derecha o la izquierda
     private int xDir; //Dirrecion de movimiento en x
     private int yDir; //Dirrecion de movimiento en y
-    public GameObject movePoint;
-    public int num;
+    public GameObject movePoint; //Punto a donde se dirige el carro
+    public GameObject bumper; //El objeto que detecta si hay colision con otro carro
+
     // Start is called before the first frame update
     void Start()
     {
         //Variables iniciales
         movepoint.parent = null;
+
+        //Si el carro spawnea de la izquierda entonces voltear lo y darle una direccion diferente a que si viene de la derecha
         if (startMovingLeftOrRight == true)
         {
             xDir = 1;
-            gameObject.GetComponentInChildren<SpriteRenderer>().flipY = true;
+            currentAngle = Quaternion.Euler(0, 0, 180);
+            turning = true;
         }
-        else {
+        else
+        {
+            //Si viene de izquierda entonces se queda igual el sprite y se dirige hacia la izquierda
             xDir = -1;
         }
         yDir = 0;
@@ -41,35 +46,22 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        num = Random.Range(1, 4);
+
         //De acuerdo al input a que dirrecion va
-        if (num == 1)
+        if (movePoint.GetComponent<PointMoved>().num == 1)
         {
             left = true;
-            right = false;
-            up = false;
-            down = false;
-        }
-        if (num == 2)
-        {
             right = true;
             up = false;
             down = false;
-            left = false;
         }
-        if (num == 3)
+
+        if (movePoint.GetComponent<PointMoved>().num == 2)
         {
             up = true;
             left = false;
-            down = false;
-            right = false;
-        }
-        if (num == 4)
-        {
             down = true;
-            left = false;
             right = false;
-            up = false;
         }
 
         //Si no ha dado la vuelta
@@ -149,17 +141,51 @@ public class Enemy : MonoBehaviour
             turnStraightUp();
         }
 
+
+
+
+        //Aceleracion y frenar del carro del enemigo. Si detecta una colision con un enemigo o si esta en lugar de parada frena
+        if (movePoint.GetComponent<PointMoved>().stop == true || bumper.GetComponent<Bumber>().collidedWithEnemy == true)
+        {
+            if (moveSpeed > 0)
+            {
+                moveSpeed = moveSpeed - 0.2f;
+            }
+            else
+            {
+                moveSpeed = 0f;
+            }
+        }
+        else
+        {
+            //Si no esta siendo detenido entonces acelera
+            if (moveSpeed < 4)
+            {
+                moveSpeed = moveSpeed + 0.05f;
+            }
+            else
+            {
+                moveSpeed = 4f;
+            }
+        }
+
         //Mueve un espacio y cuando llega al siguiente espacio programa para ir al siguiente
         //Mueve un espacio y cuando la distancia al punto donde tiene programado
         //llegar entonces se programa para ir al siguiente espacio
         if (Vector3.Distance(transform.position, movepoint.position) == 0f)
         {
-            movepoint.position += new Vector3(xDir, yDir, 0f);
+            //Si no esta en un semaforo entonces siguie cambiando el punto para que el carro se mueva hacia adelante
+            if (movePoint.GetComponent<PointMoved>().stop == false)
+            {
+                movepoint.position += new Vector3(xDir, yDir, 0f);
+
+            }
         }
 
         //Mover hacia el siguiente espacio
         transform.position = Vector3.MoveTowards(transform.position, movepoint.position, moveSpeed * Time.deltaTime);
 
+        //El carro se voltea con cierta velocidad para que se vea la vuelta mas organica
         if (turning)
         {
             transform.rotation = Quaternion.Slerp(transform.rotation, currentAngle, 0.2f);
@@ -169,6 +195,10 @@ public class Enemy : MonoBehaviour
             }
         }
     }
+
+
+
+    //Metodos para hacer las vueltas con sus direcciones correctas y cuanto se tiene que rotar el sprite
 
     private void turnStraightUp()
     {
@@ -210,10 +240,6 @@ public class Enemy : MonoBehaviour
     {
         if (Vector3.Distance(transform.position, movepoint.position) == 0f)
         {
-            if (startMovingLeftOrRight == true)
-            {
-                gameObject.GetComponentInChildren<SpriteRenderer>().flipY = false;
-            }
             turning = true;
             currentAngle = Quaternion.Euler(0, 0, 90);
             xDir = 0;

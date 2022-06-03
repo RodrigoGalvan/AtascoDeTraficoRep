@@ -16,6 +16,7 @@ TagManager:
   - StraightUp
   - Roads
   - Enemy
+  - TrafficStop
   layers:
   - Default
   - TransparentFX

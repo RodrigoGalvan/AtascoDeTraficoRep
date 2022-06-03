@@ -15,10 +15,13 @@ public class PointMoved : MonoBehaviour
     public bool canTurnLeft;
     public bool canTurnUp;
     public bool turning;
+    public int num;
+    public bool stop;
+    public bool enemyInFront;
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -26,9 +29,10 @@ public class PointMoved : MonoBehaviour
     {
     }
 
+    //De acuerdo con que colisiona el punto hacia donde se mueve el carro es que valor de true o false tiene cada variable
     private void OnTriggerEnter2D(Collider2D collision)
     {
-
+        num = Random.Range(1, 3);
         switch (collision.tag)
         {
             case "LeftUp":
@@ -62,6 +66,13 @@ public class PointMoved : MonoBehaviour
             case "Crossing":
                 turning = false;
                 break;
+            case "TrafficStop":
+                stop = true;
+                break;
+            case "Enemy":
+                enemyInFront = true;
+                break;
+
         };
     }
 
@@ -96,6 +107,12 @@ public class PointMoved : MonoBehaviour
 
             case "StraightUp":
                 canTurnUp = false;
+                break;
+            case "TrafficStop":
+                stop = false;
+                break;
+            case "Enemy":
+                enemyInFront = false;
                 break;
         };
     }

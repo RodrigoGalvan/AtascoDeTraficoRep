@@ -20,8 +20,10 @@ public class MenuController : MonoBehaviour
         
     }
 
+    //Cargar juego
     public void StartGame()
     {
+        //Cargar una sola vez
         if (!isLoading)
         {
             isLoading = true;
@@ -30,6 +32,7 @@ public class MenuController : MonoBehaviour
         
     }
 
+    // Empezar a cargar
     private IEnumerator GameLoadRoutine()
     {
         AsyncOperation op = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(NameScene);
@@ -38,6 +41,7 @@ public class MenuController : MonoBehaviour
         op.allowSceneActivation = true;
     }
 
+    //Salir del juego
     public void ExitGame()
     {
         Application.Quit();

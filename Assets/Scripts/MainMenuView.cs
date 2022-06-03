@@ -17,7 +17,7 @@ public class MainMenuView : MonoBehaviour
     }
 
 
-
+    //Pauzaar juego activa la pantalla de pausa y cambia el tiempo a 0
     public void PauseGame()
     {
         Time.timeScale = 0;

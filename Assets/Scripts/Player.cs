@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [Range(0.5f, 10f)] public float moveSpeed; //Speed para mover el carro
+    [Range(0f, 10f)] public float moveSpeed; //Speed para mover el carro
     public Rigidbody2D rig; //RigidBody del carro
     public Transform movepoint; //Mover el carro hacia un punto en frente de el para tener un movimiento conforme al grid
     private bool left; //Vuelta a la izquierda
@@ -45,7 +45,6 @@ public class Player : MonoBehaviour
         //De acuerdo al input a que dirrecion va
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            chageText("Siguiente Vuelta: Izquierda");
             left = true;
             right = false;
             up = false;
@@ -53,7 +52,6 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            chageText("Siguiente Vuelta: Derecha");
             right = true;
             up = false;
             down = false;
@@ -61,7 +59,6 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            chageText("Siguiente Vuelta: Arriba");
             up = true;
             left = false;
             down = false;
@@ -69,12 +66,40 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
-            chageText("Siguiente Vuelta: Abajo");
             down = true;
             left = false;
             right = false;
             up = false;
         }
+
+        
+
+        if (Input.GetKey(KeyCode.E))
+        {
+            if (moveSpeed < 8)
+            {
+                moveSpeed = moveSpeed + 0.01f;
+            }
+            else
+            {
+                moveSpeed = 8.0f;
+            }
+        }
+
+        chageText("Velocidad: " + Math.Round(moveSpeed,2).ToString("0.00")) ;
+
+        if (Input.GetKey(KeyCode.Q)) {
+            if (moveSpeed > 0)
+            {
+                moveSpeed = moveSpeed - 0.03f;
+            }
+            else
+            {
+                moveSpeed = 0.0f;
+            }
+        }
+        
+ 
         
         //Si no ha dado la vuelta
 
@@ -153,12 +178,13 @@ public class Player : MonoBehaviour
             turnStraightUp();
         }
 
+
         //Mueve un espacio y cuando llega al siguiente espacio programa para ir al siguiente
         //Mueve un espacio y cuando la distancia al punto donde tiene programado
         //llegar entonces se programa para ir al siguiente espacio
-        if (Vector3.Distance(transform.position, movepoint.position) == 0f)
+        if (Vector3.Distance(transform.position, movepoint.position) == 0f )
         {
-            movepoint.position += new Vector3(xDir, yDir, 0f);
+             movepoint.position += new Vector3(xDir, yDir, 0f);
         }
 
         //Mover hacia el siguiente espacio
@@ -275,11 +301,15 @@ public class Player : MonoBehaviour
         }
     }
 
+    //Cuando hace colision entonces manda datos a base de datos     
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Enemy")) {
             Time.timeScale = 0;
             GameOverMenu.SetActive(true);
+            if (GameObject.Find("PlayerInfo") != null) {
+                GameObject.Find("PlayerInfo").GetComponent<Login>().PostData();
+            }
         }
     }
 

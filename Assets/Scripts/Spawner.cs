@@ -14,7 +14,7 @@ public class Spawner : MonoBehaviour
     private GameObject exclamationRight;
 
     [SerializeField]
-    private float spawnerInterval = 3.5f;
+    private float spawnerInterval = 2f;
     int chance;
     int num;
 
@@ -24,33 +24,44 @@ public class Spawner : MonoBehaviour
     void Start()
     {
         num = 0;
+        //Empieza a spawnear
         StartCoroutine(spawnEnemy(spawnerInterval, enemyPrefab, enemyPrefab2));
     }
 
     private IEnumerator spawnEnemy(float interval, GameObject enemy, GameObject enemy2)
     {
-        chance = Random.Range(1, 3);
-        Debug.Log(chance);
+        if (num < 25)
+            //Hay dos spawners entonces se escoge random entre los dos
+            chance = Random.Range(1, 3);
+        //Se le avisa al jugador cuando va a aparecer un carro de uno de los lados
         if (chance == 1)
         {
             exclamationRight.SetActive(true);
         }
-        else {
+        else
+        {
             exclamationLeft.SetActive(true);
         }
+
+        //Se espera para que spawneen los carros
         yield return new WaitForSeconds(interval);
-        if (num < 6)
+
+        //Cantidad de carros a que salgan
+
         {
             num++;
+            //Dependiendo de cual fue el numero random es por donde salen
             if (chance == 1)
             {
                 GameObject newEnemy = Instantiate(enemy, transform.position, Quaternion.identity);
 
             }
-            else {
+            else
+            {
 
-                GameObject newEnemy = Instantiate(enemy2, transform.position - new Vector3(61f,0,0), Quaternion.identity);
+                GameObject newEnemy = Instantiate(enemy2, transform.position - new Vector3(61f, 0, 0), Quaternion.identity);
             }
+            //Desactivar signos de exclamacion porque ya salieron los carros
             exclamationLeft.SetActive(false);
             exclamationRight.SetActive(false);
             StartCoroutine(spawnEnemy(interval, enemy, enemy2));

@@ -14,6 +14,7 @@ public class LoaderController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Carga juego
         StartToLoadGame();
     }
 
@@ -29,6 +30,7 @@ public class LoaderController : MonoBehaviour
         StartCoroutine(LoadingTextRoutine());
     }
 
+    //Se espera 2 segundos para cargar juego
     private IEnumerator GameLoadRoutine()
     {
         AsyncOperation op = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(NameScene);
@@ -37,6 +39,7 @@ public class LoaderController : MonoBehaviour
         op.allowSceneActivation = true;
     }
 
+    //Mientras que juego carga se le agrega al text de cargar los puntos
     private IEnumerator LoadingTextRoutine()
     {
         yield return new WaitForSeconds(0.25f);
