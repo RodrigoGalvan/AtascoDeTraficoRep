@@ -14,9 +14,12 @@ public class Player : MonoBehaviour
     private bool down; //Vuelta a hacia abajo
     private bool up; //Vuelta a hacia arriba
     public GameObject GameOverMenu;
+    private GameObject arrow;
 
     private bool turning;
+    private bool arrowTurning;
     private Quaternion currentAngle;
+    private Quaternion arrowAngle;
 
     private int xDir; //Dirrecion de movimiento en x
     private int yDir; //Dirrecion de movimiento en y
@@ -34,7 +37,9 @@ public class Player : MonoBehaviour
         up = false;
         down = false;
         turning = false;
+        arrowTurning = false;
 
+        arrow = transform.GetChild(0).gameObject;
     }
 
     
@@ -49,6 +54,8 @@ public class Player : MonoBehaviour
             right = false;
             up = false;
             down = false;
+            arrowTurning = true;
+            arrowAngle = Quaternion.Euler(0, 0, 0);
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
@@ -56,6 +63,8 @@ public class Player : MonoBehaviour
             up = false;
             down = false;
             left = false;
+            arrowTurning = true;
+            arrowAngle = Quaternion.Euler(0, 0, 180);
         }
         if (Input.GetKey(KeyCode.UpArrow))
         {
@@ -63,6 +72,8 @@ public class Player : MonoBehaviour
             left = false;
             down = false;
             right = false;
+            arrowTurning = true;
+            arrowAngle = Quaternion.Euler(0, 0, 270);
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
@@ -70,6 +81,8 @@ public class Player : MonoBehaviour
             left = false;
             right = false;
             up = false;
+            arrowTurning = true;
+            arrowAngle = Quaternion.Euler(0, 0, 90);
         }
 
         
@@ -196,6 +209,15 @@ public class Player : MonoBehaviour
             if (transform.rotation == currentAngle)
             {
                 turning = false;
+            }
+        }
+
+        if (arrowTurning)
+        {
+            arrow.transform.rotation = Quaternion.Slerp(arrow.transform.rotation, arrowAngle, 0.2f);
+            if (arrow.transform.rotation == currentAngle)
+            {
+                arrowTurning = false;
             }
         }
     }
