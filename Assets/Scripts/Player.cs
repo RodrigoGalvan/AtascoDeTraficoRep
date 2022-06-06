@@ -15,12 +15,17 @@ public class Player : MonoBehaviour
     private bool up; //Vuelta a hacia arriba
     public GameObject GameOverMenu;
     private GameObject arrow;
+    public AudioClip acelerate;
+    public AudioClip collisionAudio;
+    public AudioClip gameOver;
+    public GameObject pauseMenu;
+    public GameObject gameOverMenu;
 
     private bool turning;
     private bool arrowTurning;
     private Quaternion currentAngle;
     private Quaternion arrowAngle;
-
+    private bool hitOnce;
     private int xDir; //Dirrecion de movimiento en x
     private int yDir; //Dirrecion de movimiento en y
     public TextMeshProUGUI textOnDisplay;
@@ -29,6 +34,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         //Variables iniciales
+        hitOnce = false;
         movepoint.parent = null;
         xDir = -1;
         yDir = 0;
@@ -42,7 +48,9 @@ public class Player : MonoBehaviour
         arrow = transform.GetChild(0).gameObject;
     }
 
-    
+
+
+
 
     // Update is called once per frame
     void Update()
@@ -59,6 +67,7 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
+            Debug.Log("Le pico a la flecha de la derecha y las variables se vuelven en true o false ");
             right = true;
             up = false;
             down = false;
@@ -85,40 +94,51 @@ public class Player : MonoBehaviour
             arrowAngle = Quaternion.Euler(0, 0, 90);
         }
 
-        
 
-        if (Input.GetKey(KeyCode.E))
+
+        if (Input.GetKey(KeyCode.E) && Time.timeScale != 0)
         {
             if (moveSpeed < 8)
             {
+                if(this.gameObject.GetComponent<AudioSource>().isPlaying == false){
+                    this.gameObject.GetComponent<AudioSource>().Play();
+                    gameObject.GetComponent<AudioSource>().volume = 0;
+                }
+                gameObject.GetComponent<AudioSource>().volume += 0.0001f;
                 moveSpeed = moveSpeed + 0.01f;
             }
             else
             {
+                gameObject.GetComponent<AudioSource>().volume = 0.05f;
                 moveSpeed = 8.0f;
             }
         }
 
-        chageText("Velocidad: " + Math.Round(moveSpeed,2).ToString("0.00")) ;
+        chageText("Velocity: " + Math.Round(moveSpeed,2).ToString("0.00")) ;
 
-        if (Input.GetKey(KeyCode.Q)) {
+        if (Input.GetKey(KeyCode.Q) && Time.timeScale != 0) {
             if (moveSpeed > 0)
             {
                 moveSpeed = moveSpeed - 0.03f;
+                gameObject.GetComponent<AudioSource>().volume -= 0.0002f;
             }
             else
             {
+                moveSpeed = moveSpeed + 0.0f;
                 moveSpeed = 0.0f;
             }
         }
-        
- 
+
+        if (pauseMenu.activeSelf || gameOverMenu.activeSelf) {
+            this.gameObject.GetComponent<AudioSource>().Stop();
+        }
+
         
         //Si no ha dado la vuelta
 
         //Si esta en el tile correcto y si no hay un collider arriba de el
         //Si el siguiente tile al que va el jugador es verdadero entonces tiene esas opciones para moverse
-        if (movePoint.GetComponent<PointMoved>().canTurnLeftUp == true && movePoint.GetComponent<PointMoved>().turning == false)
+        if (movePoint.GetComponent<PointMoved>().canTurnLeftUp == true)
         {
             //Si es derecha o arriba
             if (left)
@@ -131,7 +151,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (movePoint.GetComponent<PointMoved>().canTurnLeftDown == true && movePoint.GetComponent<PointMoved>().turning == false)
+        if (movePoint.GetComponent<PointMoved>().canTurnLeftDown == true )
         {
             if (left)
             {
@@ -144,10 +164,12 @@ public class Player : MonoBehaviour
 
         }
 
-        if (movePoint.GetComponent<PointMoved>().canTurnRightUp == true && movePoint.GetComponent<PointMoved>().turning == false)
+        if (movePoint.GetComponent<PointMoved>().canTurnRightUp == true) 
         {
+            Debug.Log("Esta en el tile de RightUp");
             if (right)
             {
+                Debug.Log("Esta en el tile de RightUp y la derecha es verdadero");
                 turnRight();
             }
             if (up)
@@ -156,7 +178,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (movePoint.GetComponent<PointMoved>().canTurnRightDown == true && movePoint.GetComponent<PointMoved>().turning == false)
+        if (movePoint.GetComponent<PointMoved>().canTurnRightDown == true)
         {
             if (right)
             {
@@ -290,6 +312,7 @@ public class Player : MonoBehaviour
     private void turnRight() {
         if (Vector3.Distance(transform.position, movepoint.position) == 0f )
         {
+            Debug.Log("Esta en el tile de RightUp");
             movePoint.GetComponent<PointMoved>().turning = true;
             turning = true;
             currentAngle = Quaternion.Euler(0, 0, 180);
@@ -326,12 +349,13 @@ public class Player : MonoBehaviour
     //Cuando hace colision entonces manda datos a base de datos     
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Enemy")) {
+        if (collision.CompareTag("Enemy") && hitOnce == false) {
+            hitOnce = true;
+            this.gameObject.GetComponent<AudioSource>().volume = 1;
+            this.gameObject.GetComponent<AudioSource>().Stop();
+            this.gameObject.GetComponent<AudioSource>().PlayOneShot(collisionAudio, .5f);
             Time.timeScale = 0;
             GameOverMenu.SetActive(true);
-            if (GameObject.Find("PlayerInfo") != null) {
-                GameObject.Find("PlayerInfo").GetComponent<Login>().PostData();
-            }
         }
     }
 

@@ -27,10 +27,11 @@ public class PointMoved : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
     }
 
     //De acuerdo con que colisiona el punto hacia donde se mueve el carro es que valor de true o false tiene cada variable
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         num = Random.Range(1, 3);
         switch (collision.tag)
@@ -38,7 +39,6 @@ public class PointMoved : MonoBehaviour
             case "LeftUp":
                 canTurnLeftUp = true;
                 break;
-
             case "LeftDown":
                 canTurnLeftDown = true;
                 break;
@@ -74,7 +74,10 @@ public class PointMoved : MonoBehaviour
                 break;
 
         };
+
     }
+
+
 
     private void OnTriggerExit2D(Collider2D collision)
     {

@@ -19,12 +19,21 @@ public class Login : MonoBehaviour
     //Metodo se ejecuta una vez que el usuario de click al boton en el form
     public void RetrieveUser()
     {
+        this.gameObject.GetComponent<AudioSource>().Stop();
+        this.gameObject.GetComponent<AudioSource>().Play();
         //Este objeto contiene info del usuario por eso no se destruye
         DontDestroyOnLoad(transform.gameObject);
         StartCoroutine(RetrieveUserInformation());
     }
 
+    public void Continuar()
+    {
+        this.gameObject.GetComponent<AudioSource>().Stop();
 
+        this.gameObject.GetComponent<AudioSource>().Play();
+        panel.SetActive(false);
+        button.SetActive(true);
+    }
     //Conseguir la info del usuario
     IEnumerator RetrieveUserInformation()
     {
@@ -75,7 +84,7 @@ public class Login : MonoBehaviour
 
 
 
-    IEnumerator PostDataTest()
+    IEnumerator PostDataTest(int score)
     {
         //Lugar donde se hace post del puntuaje
         var searchUser = url + "api/TbPuntuaje";
@@ -85,7 +94,7 @@ public class Login : MonoBehaviour
         postHeader.Add("Content-Type", "application/json");
 
         // Json a enviar convertido a bytes
-        var formData = System.Text.Encoding.UTF8.GetBytes("{\"idUsuario\":" + user.idUsuario.ToString() + ",\"puntuaje\":" + 101.ToString() + "}");
+        var formData = System.Text.Encoding.UTF8.GetBytes("{\"idUsuario\":" + user.idUsuario.ToString() + ",\"puntuaje\":" + score.ToString() + "}");
 
         //Toda informacion a enviar para hacer post
         www = new WWW(searchUser, formData, postHeader);
@@ -109,9 +118,9 @@ public class Login : MonoBehaviour
     }
 
     //Metodo que se llama cuando el jugador choca
-    public void PostData()
+    public void PostData(int score)
     {
-        StartCoroutine(PostDataTest());
+        StartCoroutine(PostDataTest(score));
 
     }
 

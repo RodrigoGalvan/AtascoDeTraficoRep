@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PointSpot : MonoBehaviour
 {
+
     public bool triggered = false;
     private void OnTriggerEnter2D(Collider2D collision)
     {

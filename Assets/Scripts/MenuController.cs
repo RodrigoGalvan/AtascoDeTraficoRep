@@ -27,6 +27,9 @@ public class MenuController : MonoBehaviour
         if (!isLoading)
         {
             isLoading = true;
+            this.gameObject.GetComponent<AudioSource>().Stop();
+
+            this.gameObject.GetComponent<AudioSource>().Play();
             StartCoroutine(GameLoadRoutine());
         }
         
