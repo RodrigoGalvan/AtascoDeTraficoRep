@@ -9,7 +9,7 @@ public class Login : MonoBehaviour
 
     [SerializeField]
     public TbUsuario user; //Datos de usuario recogidos de la base de datos
-    private const string url = "http://localhost:5000/"; //Liga a pagina web donde esta el api
+    private const string url = "eq3.appworld.com.mx/"; //Liga a pagina web donde esta el api
     public TMP_InputField userName; //Input del usuario de su usuario
     public TMP_InputField password; //Input del usuario de su contrasena
     public GameObject panel; //Panel que contiene el form a llenar por el usuario
